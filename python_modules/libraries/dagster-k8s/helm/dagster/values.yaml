@@ -14,15 +14,37 @@ dagit:
 # Image to use for executing jobs; this is typically the same image as dagit
 job_image: "dagster-docker-buildkite:latest"
 
+workers:
+  nameOverride: ""
+
 # Configuration values for postgresql
 # https://github.com/kubernetes/charts/blob/master/stable/postgresql/README.md
 postgresql:
   enabled: true
-  postgresqlUsername: dagster
-  postgresqlPassword: test123
-  postgresqlDatabase: dagster
+  postgresqlUsername: test
+  # Note when changing this password (e.g. in test) that credentials will
+  # persist as long as the PVCs do -- see:
+  # https://github.com/helm/charts/issues/12836#issuecomment-524552358
+  postgresqlPassword: test
+  postgresqlDatabase: test
   service:
     port: 5432
+
+# https://github.com/helm/charts/issues/17250#issuecomment-533444837
+rabbitmq:
+  volumePermissions:
+    enabled: true
+
+# Configuration values for rabbitmq and celery
+celery:
+  enabled: true
+  service:
+    port: 5672
+  replicaCount: 5
+
+# Configuration values for nginx-ingress
+# nginx:
+#   enabled: true
 
 serviceAccount:
   create: true
